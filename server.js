@@ -140,12 +140,12 @@ app.post('/api/search', async (req, res) => {
   const maxResults = Math.min(Math.max(parseInt(limit) || 10, 5), 20);
 
   try {
-    // 1. Busca via Serper Maps
+    // 1. Busca via Serper Search
     let serperData;
     try {
       const serperRes = await axios.post(
-        'https://google.serper.dev/maps',
-        { q: `${category} em ${city}`, gl: 'br', hl: 'pt' },
+        'https://google.serper.dev/search',
+        { q: `${category} em ${city}`, gl: 'br', hl: 'pt', num: maxResults, type: 'search' },
         {
           headers: { 'X-API-KEY': SERPER_API_KEY, 'Content-Type': 'application/json' },
           timeout: 12000,
@@ -158,17 +158,14 @@ app.post('/api/search', async (req, res) => {
       throw err;
     }
 
-    const places = serperData.places || [];
-    if (places.length === 0) {
+    const kg = serperData.knowledgeGraph || {};
+    const organic = serperData.organic || [];
+    if (organic.length === 0) {
       return res.json({ leads: [], total: 0, filtered: 0, message: 'Nenhum resultado encontrado para essa busca.' });
     }
 
-    // 2. Filtrar por rating/avaliações
-    const qualified = places.filter(p => {
-      const rating = parseFloat(p.rating) || 0;
-      const ratingCount = parseInt(p.ratingCount) || 0;
-      return rating >= 3.5 && ratingCount >= 10;
-    });
+    // 2. Filtrar: manter todos (organic não tem rating garantido)
+    const qualified = organic;
 
     // 3. Classificar presença web (limita ao solicitado)
     const toProcess = qualified.slice(0, maxResults);
@@ -176,15 +173,17 @@ app.post('/api/search', async (req, res) => {
 
     await Promise.all(
       toProcess.map(async (place) => {
-        const webStatus = await classifyWebPresence(place.website);
+        const website = place.link || null;
+        const webStatus = await classifyWebPresence(website);
         if (webStatus !== 'SITE_DECENTE') {
           leadsRaw.push({
-            name: place.title || 'Sem nome',
-            address: place.address || '',
-            phone: place.phoneNumber || place.phone || null,
-            rating: place.rating || null,
-            ratingCount: place.ratingCount || null,
-            website: place.website || null,
+            name: place.title || kg.title || 'Sem nome',
+            address: kg.address || '',
+            phone: kg.phoneNumber || kg.phone || null,
+            rating: kg.rating || null,
+            ratingCount: kg.ratingCount || null,
+            website,
+            snippet: place.snippet || '',
             webStatus,
           });
         }
@@ -232,7 +231,7 @@ app.post('/api/search', async (req, res) => {
 
     res.json({
       leads: finalLeads,
-      total: places.length,
+      total: organic.length,
       filtered: qualified.length,
     });
   } catch (err) {
