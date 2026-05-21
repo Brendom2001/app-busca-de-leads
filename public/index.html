@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LeadHunter — Prospecção Inteligente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #080810;
+      --bg-2:         #0d0d1a;
+      --bg-card:      rgba(255,255,255,0.028);
+      --bg-card-h:    rgba(255,255,255,0.048);
+      --bg-inset:     rgba(0,0,0,0.45);
+      --border:       rgba(255,255,255,0.07);
+      --border-h:     rgba(59,130,246,0.38);
+      --blue:         #3b82f6;
+      --blue-dim:     rgba(59,130,246,0.14);
+      --blue-glow:    rgba(59,130,246,0.22);
+      --green:        #10b981;
+      --amber:        #f59e0b;
+      --red:          #ef4444;
+      --purple:       #a855f7;
+      --text:         #e2e8f0;
+      --text-2:       #94a3b8;
+      --text-3:       #475569;
+      --mono:         'JetBrains Mono', monospace;
+      --sans:         'Outfit', sans-serif;
+      --r-sm:         8px;
+      --r-md:         12px;
+      --r-lg:         16px;
+      --r-xl:         20px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 90% 45% at 50% -10%, rgba(59,130,246,0.07) 0%, transparent 65%),
+        linear-gradient(rgba(59,130,246,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.022) 1px, transparent 1px);
+      background-size: 100% 100%, 44px 44px, 44px 44px;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ─── SCROLLBAR ─────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+    /* ─── HEADER ────────────────────────────────── */
+    header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 100;
+      height: 58px;
+      background: rgba(8,8,16,0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 0;
+    }
+
+    .logo-mark {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px; height: 30px;
+      background: var(--blue);
+      border-radius: 7px;
+      margin-right: 10px;
+      box-shadow: 0 0 18px var(--blue-glow);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .logo-mark::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+    }
+    .logo-mark svg { width: 16px; height: 16px; color: #fff; position: relative; z-index: 1; }
+
+    .logo-name {
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: -0.3px;
+      color: var(--text);
+    }
+    .logo-name em { font-style: normal; color: var(--blue); }
+
+    .hd-sep {
+      width: 1px; height: 18px;
+      background: var(--border);
+      margin: 0 18px;
+      flex-shrink: 0;
+    }
+
+    .hd-tag {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--text-3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hd-status {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-3);
+    }
+    .hd-status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse-green 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse-green {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+
+    /* ─── MAIN ──────────────────────────────────── */
+    main {
+      padding: 82px 24px 64px;
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    /* ─── HERO ──────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 40px 0 36px;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px;
+      border: 1px solid rgba(59,130,246,0.28);
+      background: rgba(59,130,246,0.06);
+      border-radius: 100px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--blue);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 7px var(--blue);
+    }
+    .hero-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .hero-title span { color: var(--blue); }
+    .hero-sub {
+      font-size: 15px;
+      color: var(--text-2);
+      font-weight: 400;
+      max-width: 460px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ─── SEARCH CARD ───────────────────────────── */
+    .search-wrap { margin-bottom: 36px; }
+
+    .section-eyebrow {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--text-3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-eyebrow::before {
+      content: '';
+      width: 18px; height: 1px;
+      background: var(--text-3);
+    }
+
+    .search-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 22px 24px;
+      backdrop-filter: blur(14px);
+    }
+
+    .search-form {
+      display: grid;
+      grid-template-columns: 145px 175px 1fr 130px auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    @media (max-width: 980px) {
+      .search-form {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .btn-search { grid-column: 1 / -1; }
+    }
+    @media (max-width: 600px) {
+      .search-form { grid-template-columns: 1fr 1fr; }
+      .btn-search { grid-column: 1 / -1; }
+    }
+    @media (max-width: 400px) {
+      .search-form { grid-template-columns: 1fr; }
+    }
+
+    .fi:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .fg { display: flex; flex-direction: column; gap: 5px; }
+
+    .fl {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-3);
+      letter-spacing: 0.02em;
+    }
+
+    .fi {
+      background: var(--bg-inset);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--r-sm);
+      padding: 10px 13px;
+      font-family: var(--sans);
+      font-size: 13.5px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+      width: 100%;
+    }
+    .fi::placeholder { color: var(--text-3); }
+    .fi:focus {
+      border-color: var(--border-h);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+
+    select.fi {
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 11px center;
+      padding-right: 30px;
+    }
+
+    .btn-search {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 10px 22px;
+      font-family: var(--sans);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      height: 40px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      box-shadow: 0 0 24px var(--blue-glow), inset 0 1px 0 rgba(255,255,255,0.12);
+      letter-spacing: 0.01em;
+    }
+    .btn-search:hover:not(:disabled) {
+      background: #2563eb;
+      box-shadow: 0 0 34px var(--blue-glow);
+      transform: translateY(-1px);
+    }
+    .btn-search:active:not(:disabled) { transform: none; }
+    .btn-search:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-search svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* ─── LOADING ───────────────────────────────── */
+    #loading-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 90px 24px;
+      gap: 28px;
+    }
+
+    .radar-wrap {
+      position: relative;
+      width: 72px; height: 72px;
+    }
+    .r-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(59,130,246,0.32);
+      animation: r-expand 2.2s ease-out infinite;
+    }
+    .r-ring:nth-child(1) { inset: 0; animation-delay: 0s; }
+    .r-ring:nth-child(2) { inset: 18%; animation-delay: 0.45s; }
+    .r-ring:nth-child(3) { inset: 36%; animation-delay: 0.9s; }
+    @keyframes r-expand {
+      0%   { opacity: 0.9; transform: scale(0.75); }
+      100% { opacity: 0;   transform: scale(1.25); }
+    }
+    .r-core {
+      position: absolute;
+      inset: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 16px var(--blue);
+    }
+
+    .loading-msg-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .l-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 10px var(--blue);
+      animation: l-pulse 1.3s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes l-pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.2; transform: scale(0.65); }
+    }
+    #loading-msg {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-2);
+      transition: opacity 0.3s;
+    }
+
+    /* ─── ERROR ─────────────────────────────────── */
+    #error-state { display: none; margin-bottom: 24px; }
+
+    .err-card {
+      background: rgba(239,68,68,0.05);
+      border: 1px solid rgba(239,68,68,0.18);
+      border-radius: var(--r-md);
+      padding: 18px 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .err-icon {
+      width: 38px; height: 38px;
+      flex-shrink: 0;
+      background: rgba(239,68,68,0.1);
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--red);
+      font-size: 17px;
+    }
+    .err-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 5px;
+    }
+    #error-msg { font-size: 13.5px; color: #fca5a5; line-height: 1.5; }
+
+    /* ─── RESULTS ───────────────────────────────── */
+    #results-section { display: none; }
+
+    .stats-bar {
+      background: rgba(59,130,246,0.04);
+      border: 1px solid rgba(59,130,246,0.13);
+      border-radius: var(--r-md);
+      padding: 9px 15px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.4s ease both;
+    }
+    .sb-text {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--text-2);
+    }
+    .sb-text strong { color: var(--blue); }
+    .sb-sep { color: var(--text-3); font-size: 11px; }
+    .sb-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 9px;
+      border-radius: 100px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+    }
+    .sb-pill::before { content: '●'; font-size: 7px; }
+    .sb-pill.r { background: rgba(239,68,68,0.1);  color: #fca5a5; }
+    .sb-pill.p { background: rgba(168,85,247,0.1); color: #d8b4fe; }
+    .sb-pill.a { background: rgba(245,158,11,0.1); color: #fde68a; }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.4s ease 0.05s both;
+    }
+
+    .fb {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 15px;
+      font-family: var(--sans);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .fb:hover { border-color: var(--border-h); color: var(--text); }
+    .fb.active {
+      background: rgba(59,130,246,0.1);
+      border-color: rgba(59,130,246,0.38);
+      color: var(--blue);
+    }
+    .fc {
+      background: rgba(255,255,255,0.08);
+      border-radius: 100px;
+      padding: 1px 7px;
+      font-size: 10.5px;
+      font-family: var(--mono);
+      min-width: 20px;
+      text-align: center;
+    }
+    .fb.active .fc { background: rgba(59,130,246,0.2); color: #93c5fd; }
+
+    /* Cards grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 380px) { .cards-grid { grid-template-columns: 1fr; } }
+
+    /* ─── LEAD CARD ─────────────────────────────── */
+    .lead-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      animation: fadeUp 0.4s ease both;
+      position: relative;
+      overflow: hidden;
+    }
+    .lead-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(400px circle at var(--mx,50%) var(--my,0%), rgba(59,130,246,0.05) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .lead-card:hover::before { opacity: 1; }
+    .lead-card:hover {
+      background: var(--bg-card-h);
+      border-color: rgba(59,130,246,0.22);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(59,130,246,0.08);
+    }
+    .lead-card.hidden { display: none; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Card top */
+    .ch {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .cn {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      flex: 1;
+    }
+
+    /* Score badge */
+    .sb {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .sb-num { line-height: 1; }
+    .sb-denom { font-size: 9px; font-weight: 400; opacity: 0.6; margin-top: 1px; }
+    .sb.g { background: rgba(16,185,129,0.13); color: var(--green); border: 1.5px solid rgba(16,185,129,0.28); box-shadow: 0 0 18px rgba(16,185,129,0.14); }
+    .sb.a { background: rgba(245,158,11,0.13); color: var(--amber); border: 1.5px solid rgba(245,158,11,0.28); box-shadow: 0 0 18px rgba(245,158,11,0.1); }
+    .sb.r { background: rgba(239,68,68,0.13); color: var(--red);   border: 1.5px solid rgba(239,68,68,0.28); box-shadow: 0 0 18px rgba(239,68,68,0.1); }
+
+    /* Status badge */
+    .stb {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px 3px 7px;
+      border-radius: 100px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      margin-bottom: 14px;
+    }
+    .stb::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .stb.ss { background: rgba(239,68,68,0.11); color: #fca5a5; border: 1px solid rgba(239,68,68,0.18); }
+    .stb.si { background: rgba(168,85,247,0.11); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.18); }
+    .stb.sf { background: rgba(245,158,11,0.11); color: #fde68a; border: 1px solid rgba(245,158,11,0.18); }
+
+    /* Info rows */
+    .ci { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+    .ir {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.4;
+    }
+    .ir .ico { flex-shrink: 0; font-size: 13px; }
+    .ir a { color: inherit; text-decoration: none; transition: color 0.15s; }
+    .ir a:hover { color: var(--blue); }
+    .ir .wu { font-family: var(--mono); font-size: 10.5px; color: var(--text-3); word-break: break-all; }
+    .rv { color: var(--amber); font-weight: 600; }
+    .rc { color: var(--text-3); font-size: 11.5px; margin-left: 2px; }
+
+    .cd { height: 1px; background: var(--border); margin: 15px 0; }
+
+    /* Score section */
+    .cs { margin-bottom: 15px; }
+    .sl {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 7px;
+    }
+    .sl-t {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .sl-v { font-family: var(--mono); font-size: 11px; font-weight: 600; }
+    .sl-v.g { color: var(--green); }
+    .sl-v.a { color: var(--amber); }
+    .sl-v.r { color: var(--red); }
+    .sbt { height: 3px; background: rgba(255,255,255,0.05); border-radius: 100px; overflow: hidden; margin-bottom: 8px; }
+    .sbf {
+      height: 100%;
+      border-radius: 100px;
+      transition: width 0.9s cubic-bezier(0.22,1,0.36,1);
+      width: 0%;
+    }
+    .sbf.g { background: linear-gradient(90deg, #059669, #10b981); }
+    .sbf.a { background: linear-gradient(90deg, #d97706, #f59e0b); }
+    .sbf.r { background: linear-gradient(90deg, #dc2626, #ef4444); }
+    .sj { font-size: 12px; font-style: italic; color: var(--text-2); line-height: 1.5; }
+
+    /* WhatsApp */
+    .wl { font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+    .wmb {
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 11px 13px;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.65;
+      margin-bottom: 10px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .wa { display: flex; gap: 7px; }
+
+    .btn-cp {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 8px 13px;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-cp:hover { background: rgba(255,255,255,0.07); color: var(--text); border-color: rgba(255,255,255,0.12); }
+    .btn-cp.copied { background: rgba(16,185,129,0.09); border-color: rgba(16,185,129,0.26); color: var(--green); }
+    .btn-cp svg { width: 12px; height: 12px; }
+
+    .btn-wa {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(37,211,102,0.07);
+      border: 1px solid rgba(37,211,102,0.18);
+      border-radius: 7px;
+      padding: 8px 13px;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 500;
+      color: #4ade80;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+    .btn-wa:hover { background: rgba(37,211,102,0.13); border-color: rgba(37,211,102,0.35); }
+    .btn-wa svg { width: 12px; height: 12px; }
+
+    /* ─── EMPTY ─────────────────────────────────── */
+    #empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 90px 24px;
+      gap: 10px;
+      text-align: center;
+    }
+    .empty-ico { font-size: 44px; opacity: 0.4; margin-bottom: 6px; }
+    .empty-t { font-size: 17px; font-weight: 600; color: var(--text-2); }
+    .empty-s { font-size: 13.5px; color: var(--text-3); max-width: 340px; line-height: 1.65; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-mark">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>
+      <path d="M8 11h6M11 8v6" stroke-width="2"/>
+    </svg>
+  </div>
+  <span class="logo-name">Lead<em>Hunter</em></span>
+  <div class="hd-sep"></div>
+  <span class="hd-tag">Prospecção Inteligente</span>
+  <div class="hd-status">
+    <div class="hd-status-dot"></div>
+    <span>ONLINE</span>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">IA + Google Maps + WhatsApp</div>
+    <h1 class="hero-title">Encontre negócios que precisam<br><span>de um site profissional</span></h1>
+    <p class="hero-sub">Busque por categoria e cidade, analise a presença web de cada empresa e receba mensagens de abordagem prontas para enviar.</p>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <div class="section-eyebrow">Configurar busca</div>
+    <div class="search-card">
+      <form class="search-form" id="search-form">
+        <div class="fg">
+          <label class="fl" for="inp-state">Estado</label>
+          <select class="fi" id="inp-state" required>
+            <option value="">Selecione...</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl" for="inp-city">Cidade</label>
+          <select class="fi" id="inp-city" required disabled>
+            <option value="">Selecione o estado</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl" for="inp-cat">Categoria de negócio</label>
+          <input class="fi" type="text" id="inp-cat" placeholder="Ex: clínica estética, dentista" required autocomplete="off" />
+        </div>
+        <div class="fg">
+          <label class="fl" for="inp-limit">Quantidade</label>
+          <select class="fi" id="inp-limit">
+            <option value="5">5 resultados</option>
+            <option value="10" selected>10 resultados</option>
+            <option value="15">15 resultados</option>
+            <option value="20">20 resultados</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-search" id="btn-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          Buscar Leads
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading-state">
+    <div class="radar-wrap">
+      <div class="r-ring"></div>
+      <div class="r-ring"></div>
+      <div class="r-ring"></div>
+      <div class="r-core"></div>
+    </div>
+    <div class="loading-msg-wrap">
+      <div class="l-dot"></div>
+      <span id="loading-msg">Buscando negócios na região...</span>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div id="error-state">
+    <div class="err-card">
+      <div class="err-icon">⚠</div>
+      <div>
+        <div class="err-label">Erro na busca</div>
+        <div id="error-msg">Algo deu errado. Tente novamente.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results-section">
+    <div class="stats-bar" id="stats-bar"></div>
+    <div class="filter-bar" id="filter-bar"></div>
+    <div class="cards-grid" id="cards-grid"></div>
+  </div>
+
+  <!-- Empty -->
+  <div id="empty-state">
+    <div class="empty-ico">🔍</div>
+    <div class="empty-t">Nenhum lead encontrado</div>
+    <div class="empty-s" id="empty-msg">Todos os negócios encontrados já possuem boa presença web nessa categoria.</div>
+  </div>
+
+</main>
+
+<script>
+'use strict';
+
+// ─── DADOS: ESTADOS E CIDADES ────────────────────────────────────────────────
+
+const STATES = [
+  ['AC','Acre'],['AL','Alagoas'],['AM','Amazonas'],['AP','Amapá'],['BA','Bahia'],
+  ['CE','Ceará'],['DF','Distrito Federal'],['ES','Espírito Santo'],['GO','Goiás'],
+  ['MA','Maranhão'],['MG','Minas Gerais'],['MS','Mato Grosso do Sul'],['MT','Mato Grosso'],
+  ['PA','Pará'],['PB','Paraíba'],['PE','Pernambuco'],['PI','Piauí'],['PR','Paraná'],
+  ['RJ','Rio de Janeiro'],['RN','Rio Grande do Norte'],['RO','Rondônia'],
+  ['RR','Roraima'],['RS','Rio Grande do Sul'],['SC','Santa Catarina'],
+  ['SE','Sergipe'],['SP','São Paulo'],['TO','Tocantins'],
+];
+
+const CITIES = {
+  AC: ['Rio Branco','Cruzeiro do Sul','Sena Madureira','Tarauacá','Feijó','Brasiléia','Xapuri','Epitaciolândia','Mâncio Lima','Rodrigues Alves','Plácido de Castro','Bujari','Acrelândia','Porto Acre'],
+  AL: ['Maceió','Arapiraca','Rio Largo','Palmeira dos Índios','União dos Palmares','Penedo','São Miguel dos Campos','Delmiro Gouveia','Marechal Deodoro','Coruripe','Campo Alegre','Santana do Ipanema','Murici','Pilar','Joaquim Gomes','Matriz de Camaragibe','Porto Calvo'],
+  AM: ['Manaus','Parintins','Itacoatiara','Manacapuru','Coari','Tefé','Tabatinga','Maués','São Gabriel da Cachoeira','Humaitá','Iranduba','Tonantins','Eirunepé','São Paulo de Olivença','Lábrea','Manicoré','Borba','Nova Olinda do Norte'],
+  AP: ['Macapá','Santana','Laranjal do Jari','Oiapoque','Mazagão','Porto Grande','Tartarugalzinho','Pedra Branca do Amapari','Vitória do Jari','Amapá','Ferreira Gomes','Cutias'],
+  BA: ['Salvador','Feira de Santana','Vitória da Conquista','Camaçari','Itabuna','Lauro de Freitas','Ilhéus','Jequié','Teixeira de Freitas','Barreiras','Alagoinhas','Porto Seguro','Paulo Afonso','Simões Filho','Eunápolis','Santo Antônio de Jesus','Valença','Luís Eduardo Magalhães','Brumado','Guanambi','Jacobina','Senhor do Bonfim','Cruz das Almas','Serrinha','Juazeiro','Candeias','Itamaraju','Itapetinga','Dias d\'Ávila','Madre de Deus','Conceição do Coité','Esplanada','Tucano'],
+  CE: ['Fortaleza','Caucaia','Juazeiro do Norte','Maracanaú','Sobral','Crato','Itapipoca','Maranguape','Iguatu','Quixadá','Pacatuba','Camocim','Aracati','Canindé','Russas','Limoeiro do Norte','Tianguá','Quixeramobim','Aquiraz','Horizonte','Cascavel','Morada Nova','Guaraciaba do Norte','Crateús','Boa Viagem','Barbalha','Missão Velha'],
+  DF: ['Brasília','Ceilândia','Samambaia','Taguatinga','Brazlândia','Sobradinho','Planaltina','Gama','Recanto das Emas','Santa Maria','Riacho Fundo','Núcleo Bandeirante','Guará','Águas Claras','Cruzeiro','Lago Sul','Lago Norte','Sudoeste'],
+  ES: ['Vitória','Serra','Vila Velha','Cariacica','Linhares','Cachoeiro de Itapemirim','Colatina','Guarapari','São Mateus','Aracruz','Viana','Nova Venécia','Barra de São Francisco','Conceição da Barra','Marataízes','Piúma','Anchieta','Domingos Martins'],
+  GO: ['Goiânia','Aparecida de Goiânia','Anápolis','Rio Verde','Luziânia','Águas Lindas de Goiás','Valparaíso de Goiás','Trindade','Formosa','Novo Gama','Itumbiara','Senador Canedo','Catalão','Jataí','Caldas Novas','Goianésia','Inhumas','Planaltina','Cristalina','Posse','Niquelândia','Uruaçu','Ceres','Mineiros','Morrinhos'],
+  MA: ['São Luís','Imperatriz','São José de Ribamar','Timon','Caxias','Codó','Paço do Lumiar','Açailândia','Bacabal','Balsas','Santa Inês','Pinheiro','Chapadinha','Viana','Pedreiras','Presidente Dutra','Barra do Corda','Alto Parnaíba','Grajaú','São João dos Patos','Coelho Neto','Zé Doca'],
+  MG: ['Belo Horizonte','Uberlândia','Contagem','Juiz de Fora','Betim','Montes Claros','Ribeirão das Neves','Uberaba','Governador Valadares','Ipatinga','Sete Lagoas','Divinópolis','Santa Luzia','Ibirité','Poços de Caldas','Patos de Minas','Pouso Alegre','Teófilo Otoni','Barbacena','Sabará','Vespasiano','Muriaé','Nova Lima','Conselheiro Lafaiete','Lavras','Coronel Fabriciano','João Monlevade','Pará de Minas','Caratinga','Varginha','Passos','Araguari','Itajubá','Araxá','Formiga','Cataguases','Viçosa','Ituiutaba','Curvelo','São João del-Rei','Manhuaçu','Oliveira','Sete Lagoas','Ubá','Três Corações'],
+  MS: ['Campo Grande','Dourados','Três Lagoas','Corumbá','Ponta Porã','Naviraí','Aquidauana','Sidrolândia','Nova Andradina','Maracaju','Coxim','Rio Brilhante','Paranaíba','São Gabriel do Oeste','Amambai','Aparecida do Taboado','Bonito','Chapadão do Sul','Costa Rica'],
+  MT: ['Cuiabá','Várzea Grande','Rondonópolis','Sinop','Tangará da Serra','Cáceres','Sorriso','Lucas do Rio Verde','Primavera do Leste','Barra do Garças','Alta Floresta','Colíder','Novo Progresso','Matupá','Guarantã do Norte','Campo Verde','Diamantino','Nova Mutum','Juína','Juara','São Félix do Araguaia'],
+  PA: ['Belém','Ananindeua','Santarém','Marabá','Parauapebas','Castanhal','Abaetetuba','Cametá','Altamira','Itaituba','Tucuruí','Marituba','Paragominas','Redenção','Bragança','Capanema','Tailândia','Barcarena','Benevides','São Miguel do Guamá','Tucumã','Conceição do Araguaia','Novo Repartimento'],
+  PB: ['João Pessoa','Campina Grande','Santa Rita','Patos','Bayeux','Sousa','Cajazeiras','Cabedelo','Guarabira','Esperança','Mamanguape','Sapé','Pombal','Conde','Queimadas','Monteiro','Princesa Isabel','Ingá','Areia'],
+  PE: ['Recife','Jaboatão dos Guararapes','Olinda','Caruaru','Petrolina','Paulista','Cabo de Santo Agostinho','Camaragibe','Garanhuns','Vitória de Santo Antão','Igarassu','Santa Cruz do Capibaribe','Timbaúba','Gravatá','Belo Jardim','Surubim','Arcoverde','Pesqueira','Goiana','Carpina','São Lourenço da Mata','Limoeiro','Palmares','Caetés','Serra Talhada'],
+  PI: ['Teresina','Parnaíba','Picos','Piripiri','Floriano','Campo Maior','Barras','União','Pedro II','Oeiras','Corrente','São Raimundo Nonato','Esperantina','Valença do Piauí','José de Freitas','Altos'],
+  PR: ['Curitiba','Londrina','Maringá','Ponta Grossa','Cascavel','São José dos Pinhais','Foz do Iguaçu','Colombo','Guarapuava','Paranaguá','Araucária','Toledo','Almirante Tamandaré','Umuarama','Piraquara','Campo Largo','Pinhais','Apucarana','Cambé','Sarandi','Fazenda Rio Grande','Cianorte','Paranavaí','Francisco Beltrão','Dois Vizinhos','Pato Branco','Castro','Telêmaco Borba','Rolândia','Irati','Guaratuba','Matinhos','Cornélio Procópio','Arapongas','Bandeirantes'],
+  RJ: ['Rio de Janeiro','São Gonçalo','Duque de Caxias','Nova Iguaçu','Niterói','Belford Roxo','São João de Meriti','Petrópolis','Volta Redonda','Magé','Itaboraí','Mesquita','Campos dos Goytacazes','Nova Friburgo','Barra Mansa','Macaé','Queimados','Rio das Ostras','Angra dos Reis','Teresópolis','Cabo Frio','Araruama','Itaguaí','Maricá','Nilópolis','Paracambi','Resende','Três Rios','Vassouras','São Pedro da Aldeia','Iguaba Grande','Búzios'],
+  RN: ['Natal','Mossoró','Parnamirim','São Gonçalo do Amarante','Caicó','Macaíba','Açu','Currais Novos','Ceará-Mirim','João Câmara','Nova Cruz','Apodi','Santa Cruz','Pau dos Ferros','Jardim de Piranhas','Areia Branca','Canguaretama'],
+  RO: ['Porto Velho','Ji-Paraná','Ariquemes','Vilhena','Cacoal','Rolim de Moura','Guajará-Mirim','Jaru','Ouro Preto do Oeste','Pimenta Bueno','Espigão d\'Oeste','Buritis','Machadinho d\'Oeste'],
+  RR: ['Boa Vista','Rorainópolis','Caracaraí','Mucajaí','Alto Alegre','Pacaraima','Normandia','Bonfim'],
+  RS: ['Porto Alegre','Caxias do Sul','Pelotas','Canoas','Santa Maria','Gravataí','Viamão','Novo Hamburgo','São Leopoldo','Rio Grande','Alvorada','Passo Fundo','Sapucaia do Sul','Uruguaiana','Santa Cruz do Sul','Cachoeirinha','Bagé','Bento Gonçalves','Erechim','Guaíba','Lajeado','Ijuí','Carazinho','Santo Ângelo','Santa Rosa','Farroupilha','São Gabriel','Cruz Alta','Alegrete','Sapiranga','Parobé','Campo Bom','Dois Irmãos','São Jerônimo','Venâncio Aires'],
+  SC: ['Joinville','Florianópolis','Blumenau','São José','Chapecó','Criciúma','Itajaí','Jaraguá do Sul','Lages','Balneário Camboriú','Brusque','Tubarão','São Bento do Sul','Caçador','Concórdia','Palhoça','Camboriú','Canoinhas','Xanxerê','Mafra','Araranguá','Gaspar','Navegantes','Porto União','Indaial','Rio do Sul','Joaçaba','Videira','São Francisco do Sul','Penha','Fraiburgo','Capivari de Baixo'],
+  SE: ['Aracaju','Nossa Senhora do Socorro','Lagarto','Itabaiana','São Cristóvão','Estância','Tobias Barreto','Simão Dias','Propriá','Barra dos Coqueiros','Itabaianinha','Umbaúba','Poço Redondo','Ribeirópolis'],
+  SP: ['São Paulo','Guarulhos','Campinas','São Bernardo do Campo','Santo André','Osasco','Ribeirão Preto','Sorocaba','Mauá','São José dos Campos','Santos','Mogi das Cruzes','Diadema','Jundiaí','Piracicaba','Carapicuíba','Bauru','Itaquaquecetuba','São José do Rio Preto','Suzano','Taboão da Serra','Guarujá','Praia Grande','Limeira','Franca','Taubaté','Americana','São Caetano do Sul','Presidente Prudente','Araraquara','São Vicente','Marília','Cotia','Indaiatuba','Jacareí','Hortolândia','São Carlos','Barueri','Itu','Embu das Artes','Sumaré','Várzea Paulista','Itatiba','Araçatuba','Botucatu','São João da Boa Vista','Registro','Assis','Catanduva','Rio Claro','Araras','Leme','Votuporanga','Lins','Ourinhos','Tupã','Birigui','Fernandópolis','Jaú','Bragança Paulista','Atibaia','Amparo','Mogi Guaçu','Caçapava','Taquaritinga','Bebedouro','Jaboticabal','Matão','Penápolis','Andradina'],
+  TO: ['Palmas','Araguaína','Gurupi','Porto Nacional','Paraíso do Tocantins','Colinas do Tocantins','Guaraí','Tocantinópolis','Araguatins','Dianópolis','Xambioá','Formoso do Araguaia','Pedro Afonso','Almas'],
+};
+
+// ─── CASCATA ESTADO → CIDADE ──────────────────────────────────────────────────
+
+function initStateSelect() {
+  const sel = document.getElementById('inp-state');
+  STATES.forEach(([uf, name]) => {
+    const opt = document.createElement('option');
+    opt.value = uf;
+    opt.textContent = `${name} (${uf})`;
+    sel.appendChild(opt);
+  });
+}
+
+function populateCities(uf) {
+  const citySel = document.getElementById('inp-city');
+  citySel.innerHTML = '';
+  const cities = CITIES[uf] || [];
+  if (!cities.length) {
+    citySel.disabled = true;
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = 'Nenhuma cidade disponível';
+    citySel.appendChild(opt);
+    return;
+  }
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = 'Selecione a cidade...';
+  citySel.appendChild(placeholder);
+  cities.forEach(city => {
+    const opt = document.createElement('option');
+    opt.value = city;
+    opt.textContent = city;
+    citySel.appendChild(opt);
+  });
+  citySel.disabled = false;
+}
+
+document.getElementById('inp-state').addEventListener('change', function () {
+  const uf = this.value;
+  if (uf) {
+    populateCities(uf);
+  } else {
+    const citySel = document.getElementById('inp-city');
+    citySel.innerHTML = '<option value="">Selecione o estado</option>';
+    citySel.disabled = true;
+  }
+});
+
+initStateSelect();
+
+// ─── CONFIG ──────────────────────────────────────────────────────────────────
+
+const LOADING_MSGS = [
+  'Buscando negócios na região...',
+  'Verificando presença web...',
+  'Qualificando leads...',
+  'Gerando abordagens com IA...',
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+let allLeads = [];
+let activeFilter = 'all';
+let loadingTimer = null;
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+
+function esc(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function scoreClass(s) {
+  if (s >= 8) return 'g';
+  if (s >= 5) return 'a';
+  return 'r';
+}
+
+function statusInfo(ws) {
+  return {
+    'SEM_SITE':     { label: 'Sem Site',      cls: 'ss' },
+    'SÓ_INSTAGRAM': { label: 'Só Instagram',  cls: 'si' },
+    'SITE_FRACO':   { label: 'Site Fraco',    cls: 'sf' },
+  }[ws] || { label: ws, cls: 'ss' };
+}
+
+function cleanPhone(p) {
+  if (!p) return null;
+  const digits = p.replace(/\D/g, '');
+  return digits.length >= 8 ? digits : null;
+}
+
+// ─── UI SECTIONS ─────────────────────────────────────────────────────────────
+
+function showOnly(id) {
+  const sections = ['loading-state','error-state','results-section','empty-state'];
+  sections.forEach(s => {
+    const el = document.getElementById(s);
+    if (!el) return;
+    const isTarget = (s === id);
+    if (s === 'loading-state' || s === 'empty-state') {
+      el.style.display = isTarget ? 'flex' : 'none';
+    } else {
+      el.style.display = isTarget ? 'block' : 'none';
+    }
+  });
+}
+
+function hideAll() {
+  ['loading-state','error-state','results-section','empty-state'].forEach(s => {
+    const el = document.getElementById(s);
+    if (el) el.style.display = 'none';
+  });
+}
+
+// ─── LOADING ─────────────────────────────────────────────────────────────────
+
+function startLoading() {
+  let idx = 0;
+  const el = document.getElementById('loading-msg');
+  el.textContent = LOADING_MSGS[0];
+  showOnly('loading-state');
+  loadingTimer = setInterval(() => {
+    el.style.opacity = '0';
+    setTimeout(() => {
+      idx = (idx + 1) % LOADING_MSGS.length;
+      el.textContent = LOADING_MSGS[idx];
+      el.style.opacity = '1';
+    }, 200);
+  }, 2400);
+}
+
+function stopLoading() {
+  if (loadingTimer) { clearInterval(loadingTimer); loadingTimer = null; }
+}
+
+// ─── CARD RENDERING ──────────────────────────────────────────────────────────
+
+function renderCard(lead, delay) {
+  const sc   = scoreClass(lead.score);
+  const si   = statusInfo(lead.webStatus);
+  const ph   = cleanPhone(lead.phone);
+  const waHref = ph ? `https://wa.me/55${ph}` : null;
+  const msg  = lead.whatsappMessage || '';
+
+  const card = document.createElement('div');
+  card.className = 'lead-card';
+  card.dataset.status = lead.webStatus;
+  card.style.animationDelay = delay + 'ms';
+
+  // Build static structure (no user data via innerHTML, escaped via esc())
+  const websiteHTML = lead.website
+    ? `<div class="ir"><span class="ico">🌐</span><a href="${esc(lead.website)}" target="_blank" rel="noopener noreferrer" class="wu">${esc(lead.website.replace(/^https?:\/\//,'').replace(/\/$/,'').substring(0,45))}${lead.website.length>50?'…':''}</a></div>`
+    : '';
+
+  const ratingHTML = lead.rating != null
+    ? `<div class="ir"><span class="ico">⭐</span><span class="rv">${esc(String(lead.rating))}</span>${lead.ratingCount != null ? `<span class="rc">(${esc(String(lead.ratingCount))} avaliações)</span>` : ''}</div>`
+    : '';
+
+  const addressHTML = lead.address
+    ? `<div class="ir"><span class="ico">📍</span><span>${esc(lead.address)}</span></div>`
+    : '';
+
+  const phoneHTML = lead.phone
+    ? `<div class="ir"><span class="ico">📞</span><a href="tel:${esc(lead.phone)}">${esc(lead.phone)}</a></div>`
+    : '';
+
+  const waBtn = waHref
+    ? `<a class="btn-wa" id="wa-${delay}" href="${esc(waHref)}" target="_blank" rel="noopener noreferrer">
+         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+         Abrir
+       </a>`
+    : '';
+
+  card.innerHTML = `
+    <div class="ch">
+      <div class="cn">${esc(lead.name)}</div>
+      <div class="sb ${sc}">
+        <span class="sb-num">${esc(String(lead.score))}</span>
+        <span class="sb-denom">/10</span>
+      </div>
+    </div>
+
+    <div class="stb ${si.cls}">${esc(si.label)}</div>
+
+    <div class="ci">
+      ${addressHTML}
+      ${phoneHTML}
+      ${ratingHTML}
+      ${websiteHTML}
+    </div>
+
+    <div class="cd"></div>
+
+    <div class="cs">
+      <div class="sl">
+        <span class="sl-t">Score de oportunidade</span>
+        <span class="sl-v ${sc}">${esc(String(lead.score))}/10</span>
+      </div>
+      <div class="sbt"><div class="sbf ${sc}" data-w="${lead.score * 10}"></div></div>
+      ${lead.justification ? `<div class="sj">"${esc(lead.justification)}"</div>` : ''}
+    </div>
+
+    <div class="cd"></div>
+
+    <div class="ws-section">
+      <div class="wl">💬 Mensagem de Abordagem</div>
+      <div class="wmb" id="msg-${delay}"></div>
+      <div class="wa">
+        <button class="btn-cp" data-copy-id="${delay}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+          </svg>
+          Copiar
+        </button>
+        ${waBtn}
+      </div>
+    </div>
+  `;
+
+  // Set message text safely (no innerHTML for user data)
+  const msgBox = card.querySelector(`#msg-${delay}`);
+  if (msgBox) msgBox.textContent = msg || 'Mensagem não disponível.';
+
+  // Copy button event listener
+  const copyBtn = card.querySelector('.btn-cp');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => handleCopy(copyBtn, msg));
+  }
+
+  // Mouse tracking for spotlight effect
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width * 100) + '%');
+    card.style.setProperty('--my', ((e.clientY - rect.top) / rect.height * 100) + '%');
+  });
+
+  return card;
+}
+
+// ─── COPY ────────────────────────────────────────────────────────────────────
+
+function handleCopy(btn, text) {
+  const doSuccess = () => {
+    btn.classList.add('copied');
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      Copiado ✓
+    `;
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <rect x="9" y="9" width="13" height="13" rx="2"/>
+          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+        </svg>
+        Copiar
+      `;
+    }, 2000);
+  };
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(doSuccess).catch(() => fallbackCopy(text, doSuccess));
+  } else {
+    fallbackCopy(text, doSuccess);
+  }
+}
+
+function fallbackCopy(text, cb) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); cb(); } catch (_) {}
+  document.body.removeChild(ta);
+}
+
+// ─── STATS + FILTERS ─────────────────────────────────────────────────────────
+
+function setupStats(leads) {
+  const sem   = leads.filter(l => l.webStatus === 'SEM_SITE').length;
+  const ig    = leads.filter(l => l.webStatus === 'SÓ_INSTAGRAM').length;
+  const fraco = leads.filter(l => l.webStatus === 'SITE_FRACO').length;
+
+  document.getElementById('stats-bar').innerHTML =
+    `<span class="sb-text"><strong>${leads.length}</strong> lead${leads.length !== 1 ? 's' : ''} qualificado${leads.length !== 1 ? 's' : ''}</span>` +
+    `<span class="sb-sep">—</span>` +
+    (sem   > 0 ? `<span class="sb-pill r">${sem} sem site</span>` : '') +
+    (ig    > 0 ? `<span class="sb-pill p">${ig} só instagram</span>` : '') +
+    (fraco > 0 ? `<span class="sb-pill a">${fraco} site fraco</span>` : '');
+}
+
+function setupFilters(leads) {
+  const counts = {
+    all:            leads.length,
+    SEM_SITE:       leads.filter(l => l.webStatus === 'SEM_SITE').length,
+    'SÓ_INSTAGRAM': leads.filter(l => l.webStatus === 'SÓ_INSTAGRAM').length,
+    SITE_FRACO:     leads.filter(l => l.webStatus === 'SITE_FRACO').length,
+  };
+
+  const defs = [
+    { id: 'all',            label: 'Todos' },
+    { id: 'SEM_SITE',       label: 'Sem Site' },
+    { id: 'SÓ_INSTAGRAM',   label: 'Só Instagram' },
+    { id: 'SITE_FRACO',     label: 'Site Fraco' },
+  ];
+
+  const bar = document.getElementById('filter-bar');
+  bar.innerHTML = '';
+
+  defs.forEach(def => {
+    if (def.id !== 'all' && counts[def.id] === 0) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'fb' + (def.id === activeFilter ? ' active' : '');
+    btn.innerHTML = `${esc(def.label)}<span class="fc">${counts[def.id]}</span>`;
+    btn.addEventListener('click', () => {
+      activeFilter = def.id;
+      document.querySelectorAll('.fb').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilter();
+    });
+    bar.appendChild(btn);
+  });
+}
+
+function applyFilter() {
+  document.querySelectorAll('.lead-card').forEach(card => {
+    const show = activeFilter === 'all' || card.dataset.status === activeFilter;
+    card.classList.toggle('hidden', !show);
+  });
+}
+
+// ─── RENDER LEADS ────────────────────────────────────────────────────────────
+
+function renderLeads(leads) {
+  const grid = document.getElementById('cards-grid');
+  grid.innerHTML = '';
+
+  leads.forEach((lead, i) => {
+    const delay = i * 55;
+    const card = renderCard(lead, delay);
+    grid.appendChild(card);
+  });
+
+  // Animate score bars after paint
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      document.querySelectorAll('.sbf').forEach(bar => {
+        bar.style.width = (bar.dataset.w || 0) + '%';
+      });
+    }, 80);
+  });
+}
+
+// ─── SEARCH HANDLER ──────────────────────────────────────────────────────────
+
+document.getElementById('search-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const stateUF  = document.getElementById('inp-state').value;
+  const cityName = document.getElementById('inp-city').value;
+  const category = document.getElementById('inp-cat').value.trim();
+  const limit    = parseInt(document.getElementById('inp-limit').value, 10);
+
+  if (!stateUF || !cityName || !category) return;
+
+  const city = `${cityName} - ${stateUF}`;
+
+  const btn = document.getElementById('btn-search');
+  btn.disabled = true;
+  activeFilter = 'all';
+
+  startLoading();
+
+  try {
+    const res = await fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ city, category, limit }),
+    });
+
+    stopLoading();
+
+    let data;
+    try { data = await res.json(); }
+    catch { data = { error: 'Resposta inválida do servidor.' }; }
+
+    if (!res.ok || data.error) {
+      document.getElementById('error-msg').textContent = data.error || 'Erro desconhecido.';
+      showOnly('error-state');
+      return;
+    }
+
+    allLeads = data.leads || [];
+
+    if (allLeads.length === 0) {
+      document.getElementById('empty-msg').textContent =
+        data.message || 'Nenhum lead qualificado encontrado para essa busca.';
+      showOnly('empty-state');
+      return;
+    }
+
+    showOnly('results-section');
+    setupStats(allLeads);
+    setupFilters(allLeads);
+    renderLeads(allLeads);
+
+    // Scroll to results
+    setTimeout(() => {
+      document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+
+  } catch (err) {
+    stopLoading();
+    document.getElementById('error-msg').textContent =
+      'Não foi possível conectar ao servidor. Verifique se ele está rodando na porta 3000.';
+    showOnly('error-state');
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
