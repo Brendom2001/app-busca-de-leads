@@ -11,6 +11,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 const SERPER_API_KEY = process.env.SERPER_API_KEY;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
+console.log('[DEBUG] SERPER_API_KEY:', SERPER_API_KEY ? `${SERPER_API_KEY.substring(0, 6)}...` : 'UNDEFINED');
+console.log('[DEBUG] OPENAI_API_KEY:', OPENAI_API_KEY ? 'OK' : 'UNDEFINED');
+
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 const SOCIAL_DOMAINS = [
