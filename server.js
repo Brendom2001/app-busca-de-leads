@@ -193,7 +193,7 @@ app.post('/api/search', async (req, res) => {
     if (leadsRaw.length === 0) {
       return res.json({
         leads: [],
-        total: places.length,
+        total: organic.length,
         filtered: qualified.length,
         message: 'Todos os negócios encontrados já possuem boa presença web.',
       });
