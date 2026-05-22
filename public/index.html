@@ -747,7 +747,31 @@
         </div>
         <div class="fg">
           <label class="fl" for="inp-cat">Categoria de negócio</label>
-          <input class="fi" type="text" id="inp-cat" placeholder="Ex: clínica estética, dentista" required autocomplete="off" />
+          <input class="fi" type="text" id="inp-cat" placeholder="Ex: clínica estética, dentista" required autocomplete="off" list="cat-suggestions" />
+          <datalist id="cat-suggestions">
+            <option value="Academia de ginástica">
+            <option value="Advogado / Escritório de advocacia">
+            <option value="Auto escola">
+            <option value="Barbearia">
+            <option value="Clínica de estética automotiva">
+            <option value="Clínica estética">
+            <option value="Clínica médica">
+            <option value="Clínica odontológica">
+            <option value="Contabilidade / Escritório contábil">
+            <option value="Escola de idiomas">
+            <option value="Fisioterapia">
+            <option value="Fotógrafo / Estúdio fotográfico">
+            <option value="Imobiliária">
+            <option value="Lanchonete / Restaurante">
+            <option value="Mecânica / Oficina mecânica">
+            <option value="Nutricionista">
+            <option value="Personal trainer">
+            <option value="Pet shop">
+            <option value="Psicóloga / Psicólogo">
+            <option value="Salão de beleza">
+            <option value="Studio de pilates / Yoga">
+            <option value="Veterinária">
+          </datalist>
         </div>
         <div class="fg">
           <label class="fl" for="inp-limit">Quantidade</label>
@@ -858,7 +882,8 @@ const CITIES = {
 
 function initStateSelect() {
   const sel = document.getElementById('inp-state');
-  STATES.forEach(([uf, name]) => {
+  const sorted = [...STATES].sort((a, b) => a[1].localeCompare(b[1], 'pt-BR'));
+  sorted.forEach(([uf, name]) => {
     const opt = document.createElement('option');
     opt.value = uf;
     opt.textContent = `${name} (${uf})`;
@@ -869,7 +894,7 @@ function initStateSelect() {
 function populateCities(uf) {
   const citySel = document.getElementById('inp-city');
   citySel.innerHTML = '';
-  const cities = CITIES[uf] || [];
+  const cities = (CITIES[uf] || []).slice().sort((a, b) => a.localeCompare(b, 'pt-BR'));
   if (!cities.length) {
     citySel.disabled = true;
     const opt = document.createElement('option');
