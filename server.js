@@ -96,23 +96,20 @@ async function scoreLeadsWithOpenAI(leads, category, city) {
           content: `Para cada lead, gere uma mensagem de abordagem WhatsApp seguindo as regras abaixo.
 
 REGRAS:
-1. Máximo 3 linhas. Sem enrolação.
-2. NUNCA começar com 'Olá', 'Oi', 'Vi seu perfil' ou qualquer saudação genérica.
-3. Começar direto com uma observação específica sobre o negócio — use o nome, a cidade, o nicho ou a situação web atual.
-4. Linha 2: apresentar a consequência real do problema deles, não o problema em si. Exemplo: não dizer 'você não tem site', mas sim 'qualquer paciente que te pesquisa no Google hoje some em 3 segundos'.
-5. Linha 3: terminar com uma pergunta que pressupõe que o lead já pensa nisso — não perguntar SE ele quer, mas como ele está lidando com isso. Exemplos do formato certo:
-   - 'Como você tá captando paciente novo fora do Instagram hoje?'
-   - 'Seus concorrentes aparecem quando alguém pesquisa [nicho] em [cidade] — vocês também?'
-   - 'Todo mundo que te indica consegue te achar online facilmente?'
-6. Tom: direto, humano, leve. Como uma pessoa curiosa, não um vendedor.
+1. Máximo 4 linhas.
+2. SEMPRE começar com "Oi" ou "Boa tarde" seguido do nome do negócio ou da pessoa responsável se disponível. Natural, como uma pessoa mandando mensagem.
+3. Linha 2: uma observação específica e positiva sobre o negócio — nota no Google, tempo de mercado, nicho — algo que mostre que você pesquisou, não que jogou no template.
+4. Linha 3: apresentar a consequência do problema de forma leve, sem atacar. Não dizer "você perde cliente", mas sim algo como "a maioria das buscas por [categoria] em [cidade] não te encontra ainda".
+5. Linha 4: terminar com uma pergunta curiosa e aberta, que pressupõe que o lead já pensa nisso. Não perguntar SE quer, mas como está lidando.
+6. Tom: curioso, leve, humano. Como um conhecido que notou algo e quer entender melhor — não um vendedor.
 7. Nunca usar 'landing page'. Usar 'site', 'página própria' ou 'presença online'.
 8. Máximo 1 emoji, opcional.
-9. Português brasileiro informal, sem gírias forçadas.
+9. Português brasileiro informal e natural.
 
 EXEMPLOS DO TOM EXATO:
-- 'A [Clínica X] tem 4.9 no Google e nenhum site — toda busca que alguém faz por vocês vai parar no concorrente. Como vocês tão captando paciente novo hoje?'
-- '[Nome], nutricionista em Sapiranga sem site próprio em 2025 é dinheiro deixado na mesa toda semana. Quanto cliente você acha que pesquisa no Google e não te acha?'
-- 'Vi que a [Clínica] só tem Instagram. Quando alguém pesquisa [categoria] em [cidade] agora, quem aparece no resultado não é vocês — como vocês tão lidando com isso?'
+- "Oi, [Nome]! Vi que a clínica tem ótimas avaliações no Google — impressionante. Só que quem pesquisa por [categoria] em [cidade] ainda não te encontra facilmente online. Como vocês estão recebendo pacientes novos hoje em dia?"
+- "Boa tarde! A [Clínica X] aparece bem no Maps, mas sem um site próprio a maioria das buscas no Google acaba indo pro concorrente. Isso já apareceu como problema pra vocês?"
+- "Oi! Vi que o [Nome] tem bastante avaliação positiva — negócio consolidado. Só percebi que a presença online ainda pode melhorar, e isso às vezes deixa cliente novo escapar. Vocês já pensaram nisso?"
 
 LEADS:
 ${leadsBlock}
