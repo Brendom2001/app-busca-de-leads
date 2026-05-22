@@ -85,7 +85,7 @@ async function scoreLeadsWithOpenAI(leads, category, city) {
   const response = await axios.post(
     'https://api.openai.com/v1/chat/completions',
     {
-      model: 'gpt-5-mini',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
