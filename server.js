@@ -89,24 +89,30 @@ async function scoreLeadsWithOpenAI(leads, category, city) {
       messages: [
         {
           role: 'system',
-          content: 'Você é um SDR sênior especialista em vendas consultivas para pequenos negócios no Brasil. Você escreve mensagens de WhatsApp que parecem 100% humanas, nunca robóticas. Suas mensagens têm taxa de resposta altíssima porque seguem regras rígidas.',
+          content: 'Você é um especialista em copywriting de alta conversão para pequenos negócios no Brasil. Você escreve mensagens de WhatsApp que parecem enviadas por uma pessoa real — não um vendedor, não um bot. Suas mensagens funcionam porque atacam uma dor específica do negócio e terminam com uma pergunta que o lead não consegue ignorar.',
         },
         {
           role: 'user',
-          content: `Para cada lead abaixo, gere:
-- score: número de 1 a 10 representando a oportunidade de venda de site profissional
-- justification: frase curta de até 12 palavras explicando o score
-- whatsappMessage: mensagem de abordagem WhatsApp seguindo EXATAMENTE as 8 regras abaixo
+          content: `Para cada lead, gere uma mensagem de abordagem WhatsApp seguindo as regras abaixo.
 
-REGRAS OBRIGATÓRIAS para a whatsappMessage:
+REGRAS:
 1. Máximo 3 linhas. Sem enrolação.
-2. Começar mencionando algo específico do negócio (nome, localização, nota no Google ou nicho) — nunca começar com 'Olá' genérico ou 'Vi seu perfil'
-3. Deixar claro o problema que eles têm (sem site, só Instagram, site ruim) de forma natural — não agressiva
-4. Terminar com UMA pergunta aberta simples que convida resposta, nunca com CTA genérico tipo 'podemos conversar?'
-5. Tom: direto, leve, como se fosse uma pessoa real mandando mensagem — não vendedor, não robô
-6. Nunca usar emojis em excesso (máximo 1, opcional)
-7. Nunca mencionar 'landing page' diretamente — falar em 'site profissional', 'página própria' ou 'presença online de verdade'
-8. Escrever em português brasileiro informal mas sem gírias forçadas
+2. NUNCA começar com 'Olá', 'Oi', 'Vi seu perfil' ou qualquer saudação genérica.
+3. Começar direto com uma observação específica sobre o negócio — use o nome, a cidade, o nicho ou a situação web atual.
+4. Linha 2: apresentar a consequência real do problema deles, não o problema em si. Exemplo: não dizer 'você não tem site', mas sim 'qualquer paciente que te pesquisa no Google hoje some em 3 segundos'.
+5. Linha 3: terminar com uma pergunta que pressupõe que o lead já pensa nisso — não perguntar SE ele quer, mas como ele está lidando com isso. Exemplos do formato certo:
+   - 'Como você tá captando paciente novo fora do Instagram hoje?'
+   - 'Seus concorrentes aparecem quando alguém pesquisa [nicho] em [cidade] — vocês também?'
+   - 'Todo mundo que te indica consegue te achar online facilmente?'
+6. Tom: direto, humano, leve. Como uma pessoa curiosa, não um vendedor.
+7. Nunca usar 'landing page'. Usar 'site', 'página própria' ou 'presença online'.
+8. Máximo 1 emoji, opcional.
+9. Português brasileiro informal, sem gírias forçadas.
+
+EXEMPLOS DO TOM EXATO:
+- 'A [Clínica X] tem 4.9 no Google e nenhum site — toda busca que alguém faz por vocês vai parar no concorrente. Como vocês tão captando paciente novo hoje?'
+- '[Nome], nutricionista em Sapiranga sem site próprio em 2025 é dinheiro deixado na mesa toda semana. Quanto cliente você acha que pesquisa no Google e não te acha?'
+- 'Vi que a [Clínica] só tem Instagram. Quando alguém pesquisa [categoria] em [cidade] agora, quem aparece no resultado não é vocês — como vocês tão lidando com isso?'
 
 LEADS:
 ${leadsBlock}
