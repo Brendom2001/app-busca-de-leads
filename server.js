@@ -153,8 +153,12 @@ app.post('/api/search', async (req, res) => {
       );
       serperData = serperRes.data;
     } catch (err) {
-      if (err.response?.status === 401) return res.status(401).json({ error: 'Chave Serper inválida. Verifique o .env.' });
-      if (err.response?.status === 429) return res.status(429).json({ error: 'Rate limit Serper atingido. Aguarde alguns segundos.' });
+      if (err.response?.status === 401) return res.status(401).json({ error: 'Chave Serper inválida.' });
+      if (err.response?.status === 403) {
+        console.error('[SERPER 403]', JSON.stringify(err.response?.data));
+        return res.status(403).json({ error: 'Serper recusou a requisição: ' + JSON.stringify(err.response?.data) });
+      }
+      if (err.response?.status === 429) return res.status(429).json({ error: 'Rate limit Serper.' });
       throw err;
     }
 
